@@ -1,0 +1,68 @@
+import React, { useState, useContext } from "react";
+import { Redirect } from "react-router-dom";
+import { MainContent } from "./";
+import { apiPostFD } from "../utils/api";
+import AppContext from "../AppContext";
+import { Button, Form, FormGroup, Label, Input, Spinner } from "reactstrap";
+
+const NewRecording = () => {
+  const [submitted, setSubmitted] = useState(false);
+  const [presentationTitle, setPresentationTitle] = useState("");
+  const [presentationFile, setPresentationFile] = useState();
+  const [disabled, setDisabled] = useState(false);
+  const [newId, setNewId] = useState();
+  const { currentUser } = useContext(AppContext);
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setDisabled(true);
+    const dateString = Date.now().toString();
+    const fd = new FormData();
+    fd.append("dateString", dateString);
+    fd.append("presentationTitle", presentationTitle);
+    fd.append("presentation", presentationFile);
+    fd.append("presenterId", currentUser.id);
+    const res = await apiPostFD("recordings", fd);
+    setNewId(res.data.id);
+    setSubmitted(true);
+  }
+
+  if (submitted) return <Redirect to={`/record/${newId}`} />;
+
+  return (
+    <div id="newRecording">
+      <MainContent heading="Setup New Recording">
+        <p className="lead">
+          Please enter your information below to set up a new recording.
+        </p>
+        <Form onSubmit={handleSubmit} className="p-4 bg-light">
+          <FormGroup>
+            <Label>Presentation Title:</Label>
+            <Input
+              disabled={disabled}
+              value={presentationTitle}
+              onChange={(e) => setPresentationTitle(e.target.value)}
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label>Upload Presentation File:</Label>
+            <Input
+              disabled={disabled}
+              type="file"
+              onChange={(e) => setPresentationFile(e.target.files[0])}
+            />
+          </FormGroup>
+          {disabled ? (
+            <div><Spinner /> Uploading... (This may take a few minutes)</div>
+          ) : (
+            <Button color="primary" className="mt-3 rounded-pill">
+              Submit
+            </Button>
+          )}
+        </Form>
+      </MainContent>
+    </div>
+  );
+};
+
+export default NewRecording;

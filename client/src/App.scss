@@ -1,0 +1,142 @@
+@import './variables.scss';
+@import 'bootstrap/scss/bootstrap.scss';
+
+
+table {
+    font-size: 0.9rem;
+}
+
+div.main {
+    margin-left: $sidebarWidth;
+    padding-top: $sidebarTopHeight;
+
+    h1 {
+        font-size: 2rem;
+    }
+}
+
+#login {
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    background: url("/img/ezav-bg.jpg");
+    background-size: cover;
+    background-position: bottom;
+    .card {
+        max-width: 480px;
+        margin: 0 auto;
+        background-color: rgba(255, 255, 255, 0.6);
+    }
+}
+
+#dashboard {
+    div.main div.jumbotron h1.display-3 {
+        font-size: 4rem;
+    }
+}
+
+#sideBar {
+    position: fixed;
+    height: 100vh;
+    width: $sidebarWidth;
+    z-index: 999;
+
+    img {
+        max-width: 100%;
+    }
+    .nav-link {
+        color: black;
+    }
+}
+
+#sideBar.presenter {
+    background: url("/img/sb-bg-presenter.jpg");
+    background-size: cover;
+}
+
+#sideBar.admin {
+    // background: url("/img/sb-bg-admin.jpg");
+    // background: #292929;
+    background-size: cover;
+}
+
+#sidebarTop {
+    position: fixed;
+    width: 100vw;
+    height: $sidebarTopHeight;
+    z-index: 998;
+}
+
+#sidebarBottom {
+    position: fixed;
+    bottom: 0;
+    width: 100vw;
+    z-index: 997;
+    padding-left: $sidebarWidth;
+}
+
+.nav-pills .nav-link.active {
+    background-color: #ffc107;
+}
+
+#recordingLayout {
+    canvas {
+        background-color: black;
+        max-width: 100%;
+    }
+    #slideDeck {
+        position: fixed;
+        height: 100vh;
+        width: $slideDeckWidth;
+        overflow-y: scroll;
+
+        .slide-wrapper {
+            background-color: #ddd;
+            cursor: pointer;
+          }
+          
+          .slide-wrapper:hover {
+            border: 3px solid #ccc;
+          }
+          
+          .slide-wrapper.active {
+            border: 3px solid #aaa;
+          }
+    }
+    #recordWindow {
+        margin-left: $slideDeckWidth;
+    }
+
+
+    .blink {
+      animation: blinker 1s linear infinite;
+    }
+    
+    @keyframes blinker {
+      50% {
+        opacity: 0;
+      }
+    }
+}
+
+.logo-preview,
+.frame-preview {
+    max-height: 80px;
+}
+
+.slide-preview {
+    max-height: 80px;
+    padding: 2px;
+}
+
+.table > tbody > tr > td {
+    vertical-align: middle;
+}
+
+#loading {
+    width: 100%;
+    padding: 5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
