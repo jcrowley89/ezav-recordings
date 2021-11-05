@@ -4,21 +4,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { List, Button } from "reactstrap";
 import { Sidebar } from "./";
 import AppContext from "../AppContext";
-import { apiGet } from "../utils/api";
-import { MEDIA_URL } from "../utils/constants";
-import dates from "../utils/dates";
 
 const Home = () => {
   const { currentUser } = useContext(AppContext);
-  const [program, setProgram] = useState();
-
-  useEffect(() => {
-    if (currentUser && currentUser.role == "presenter") {
-      apiGet(`programs/${currentUser?.programId}`).then((res) => {
-        setProgram(res.data);
-      });
-    }
-  }, [currentUser]);
 
   if (currentUser && currentUser.role !== "presenter") {
     return (
@@ -41,27 +29,6 @@ const Home = () => {
       <Sidebar />
       <div className="main">
         <div className="p-5">
-          {program && program.logo ? (
-            <div className="mb-4">
-              <img
-                src={program && `${MEDIA_URL}${program.logo}.png`}
-                alt="logo"
-                className="logo-preview"
-              />
-              <div>
-                <strong>
-                  {program && program.clientName} -{" "}
-                  {program && program.eventTitle}
-                </strong>
-                {" "}(
-                {program &&
-                  `${dates.formatMMDD(
-                    new Date(program.beginsOn)
-                  )}-${dates.formatMMDD(new Date(program.endsOn))}`}
-                )
-              </div>
-            </div>
-          ) : null}
           <h1 style={{ fontWeight: "bold", fontSize: "4rem" }}>
             Welcome, {currentUser?.firstName}!
           </h1>
