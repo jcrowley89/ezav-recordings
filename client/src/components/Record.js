@@ -15,8 +15,10 @@ const Record = () => {
   const [frameLoaded, setFrameLoaded] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const [mediaStream, setMediaStream] = useState();
+  const [recStream, setRecStream] = useState();
   const [flagCount, setFlagCount] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [recordingStarted, setRecordingStarted] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [time, setTime] = useState(0);
   const [slides, setSlides] = useState([]);
@@ -102,7 +104,41 @@ const Record = () => {
     }
   }, [isPlaying]);
 
-  // TODO: Cleanup :/
+  useEffect(() => {
+    if (recordingStarted && !recStream) {
+      setRecStream(monitorRef.current.captureStream(30));
+    }
+  }, [recordingStarted]);
+
+  useEffect(() => {
+    if (recStream) {
+      mediaStream.getAudioTracks.forEach(t => recStream.addTrack(t));
+    }
+    setIsRecording(true);
+  }, [recStream]);
+
+  useEffect(() => {
+    if (isRecording && recStream) {
+      const recorder = new MediaRecorder(recStream, { type: "video/webm" });
+      const chunks = [];
+      recorder.addEventListener("dataavailable", (event) => {
+        if (typeof event.data === "undefined") return;
+        if (event.data.size === 0) return;
+        chunks.push(event.data);
+      });
+      recorder.start();
+      const interval = setInterval(() => setTime(t => t + 1), 1000);
+      recorder.addEventListener("stop", () => {
+        mediaStream.getTracks().forEach(track => track.stop());
+        const recording = new Blob(chunks, {
+          type: "video/webm",
+        });
+        // renderRecording(recording);
+        chunks = [];
+      });
+    }
+  }, [isRecording, recStream]);
+
   useEffect(() => {
     if (mediaStream) {
       return () => {
@@ -112,10 +148,6 @@ const Record = () => {
       };
     }
   }, [mediaStream]);
-
-  // async function getStream() {
-  //   setIsReady(true);
-  // }
 
   function handleCanPlay() {
     videoRef.current.play();
@@ -261,34 +293,34 @@ const Record = () => {
               <ButtonGroup className="mx-3">
                 <Button
                   color="danger"
-                  // onClick={startRecording}
-                  disabled={isRecording}
+                  onClick={() => setRecordingStarted(true)}
+                  disabled={recordingStarted}
                 >
                   <FontAwesomeIcon
                     icon="circle"
-                    className={isRecording ? "blink" : ""}
+                    className={recordingStarted ? "blink" : ""}
                   />{" "}
                   Record
                 </Button>
                 <div
                   id="timer"
                   className={`bg-dark d-flex align-items-center justify-content-center px-4 ${
-                    isRecording ? "text-danger" : "text-light"
+                    recordingStarted ? "text-danger" : "text-light"
                   }`}
                 >
                   {toHHMMSS(time)}
                 </div>
                 <Button
                   color="secondary"
-                  // onClick={recorder.stop}
-                  disabled={!isRecording}
+                  onClick={() => setRecordingStarted(false)}
+                  disabled={!recordingStarted}
                 >
                   <FontAwesomeIcon icon="square" /> Stop
                 </Button>
                 <Button
                   color="warning"
                   onClick={() => setFlagCount(flagCount + 1)}
-                  disabled={!isRecording}
+                  disabled={!recordingStarted}
                 >
                   <FontAwesomeIcon icon="flag" /> Flag{" "}
                   <Badge color="dark">{flagCount}</Badge>
