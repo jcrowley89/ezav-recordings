@@ -86,6 +86,7 @@ const Presenters = () => {
                 data.map((p) => (
                   <PresenterRow
                     presenter={p}
+                    key={p.id}
                     onClick={() => deletePresenter(p.id)}
                   />
                 ))}

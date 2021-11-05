@@ -80,7 +80,7 @@ const Programs = () => {
                 ? programs.map((p) => (
                     <ProgramRow
                       program={p}
-                      key={p._id}
+                      key={p.id}
                       onClick={() => handleClick(p.id)}
                     />
                   ))
