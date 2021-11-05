@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Badge, Button, ButtonGroup, Container } from "reactstrap";
 import { Loading, Monitor, Slide } from "./";
-import { apiGet } from "../utils/api";
+import { apiGet, s3put, apiPost } from "../utils/api";
 import { MEDIA_URL } from "../utils/constants";
 import { toHHMMSS } from "../utils/helpers";
 import AppContext from "../AppContext";
@@ -249,8 +249,30 @@ const Record = () => {
   }
 
   function flag() {
-    setFlagCount(fc => fc + 1);
+    setFlagCount((fc) => fc + 1);
     flagsRef.current.push(toHHMMSS(time));
+  }
+
+  function submitRecording() {
+    // const fd = new FormData();
+    // fd.append("id", id);
+    // fd.append("flags", JSON.stringify(flags));
+    // fd.append("video", recordingRef.current, "recordedvideo.webm");
+    apiGet("recordings/getSubmitUrl")
+      .then(
+        (res) => {
+          console.log("hi from axios?");
+          const url = res.data.url;
+          s3put(url, recordingRef.current)
+            .then((res) => console.log(res))
+            .catch((err) => console.log("inner", err));
+        },
+        (x) => console.log(x, "ljhgkjvgkhgv")
+      )
+      .catch((err) => {
+        // handle error
+        console.log("outer", err);
+      });
   }
 
   if (recordingReady) {
@@ -265,21 +287,25 @@ const Record = () => {
         </h2>
         <hr />
         <div className="embed-responsive embed-responsive-16by9">
-          <video
-            src={blobURLRef.current || ""}
-            controls
-          />
+          <video src={blobURLRef.current || ""} controls />
         </div>
         <div id="flags" className="bg-light m-3 p-4">
           <h4>Flags</h4>
           {flagsRef.current && flagsRef.current.length > 0 ? (
             <>
-            {flagsRef.current.map((f, i) => <div>Flag {i + 1}: {f}</div>)}
+              {flagsRef.current.map((f, i) => (
+                <div>
+                  Flag {i + 1}: {f}
+                </div>
+              ))}
             </>
-          ) : "No flags"}
+          ) : (
+            "No flags"
+          )}
         </div>
         <div className="p-2">
-          <Button block color="primary">
+          <Button block color="primary" onClick={submitRecording}>
+            <FontAwesomeIcon icon="upload" className="mr-2" />
             Upload
           </Button>
         </div>

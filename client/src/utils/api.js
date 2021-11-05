@@ -40,6 +40,18 @@ export function apiPost(url, data) {
   });
 }
 
+export function s3put(url, object) {
+  return axios({
+    method: "put",
+    url: url,
+    data: object,
+    headers: {
+      "Content-Type": "video/webm",
+      "Access-Control-Allow-Origin": "*",
+    }
+  });
+}
+
 export function apiPostFD(url, data) {
   const fdHeaders = headers();
   fdHeaders["Content-Type"] = "multipart/form-data";

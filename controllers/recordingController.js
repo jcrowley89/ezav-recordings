@@ -2,6 +2,7 @@ const sequelize = require("sequelize");
 const { Recording, Presenter, Program } = require("../db/models");
 const path = require("path");
 const countSlides = require("../utils/countSlides");
+const s3 = require("../utils/s3");
 
 exports.index = async (req, res) => {
   const { id, role } = req.user;
@@ -21,7 +22,9 @@ exports.index = async (req, res) => {
 
   if (role === "presenter") {
     const presenter = await Presenter.findByPk(id);
-    recordings = recordings.filter(r => r.Presenter.ProgramId === presenter.ProgramId);
+    recordings = recordings.filter(
+      (r) => r.Presenter.ProgramId === presenter.ProgramId
+    );
   }
 
   const results = recordings.map((r) => {
@@ -44,7 +47,9 @@ exports.index = async (req, res) => {
 
 exports.create = async (req, res) => {
   const { presentationTitle, presenterId, dateString } = req.body;
-  const numSlides = await countSlides(`${req.file.fieldname}-${dateString}-out`);
+  const numSlides = await countSlides(
+    `${req.file.fieldname}-${dateString}-out`
+  );
   console.log(numSlides);
   const recording = await Recording.create({
     presentationTitle: presentationTitle,
@@ -55,6 +60,24 @@ exports.create = async (req, res) => {
     PresenterId: presenterId,
   });
   res.json(recording);
+};
+
+exports.getSubmitURL = async (req, res) => {
+  s3.getSignedUrl(
+    "putObject",
+    {
+      Bucket: "ezav-recordings",
+      Key: `${Date.now().toString()}.webm`,
+      ContentType: "video/webm",
+    },
+    (err, url) => {
+      if (err) {
+        console.log(err);
+        res.status(500).end();
+      }
+      res.json({ url: url });
+    }
+  );
 };
 
 exports.read = async (req, res) => {
