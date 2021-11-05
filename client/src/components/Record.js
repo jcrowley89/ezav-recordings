@@ -84,7 +84,6 @@ const Record = () => {
 
   async function getStream() {
     const stream = await navigator.mediaDevices.getUserMedia(mediaOpts);
-    // videoRef.current.srcObject = stream;
     setMediaStream(stream);
     setIsReady(true);
   }

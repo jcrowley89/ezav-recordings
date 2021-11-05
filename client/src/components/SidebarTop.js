@@ -24,9 +24,10 @@ const SidebarTop = () => {
         {currentUser?.firstName} {currentUser?.lastName}
       </p>
       <Button
+        outline={currentUser && currentUser.role === "presenter"}
         color="warning"
         size="sm"
-        className="mx-4 my-2 px-2 rounded-pill"
+        className="mx-4 my-2 px-4 rounded-pill"
         onClick={handleLogout}
       >
         Logout
