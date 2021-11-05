@@ -24,12 +24,20 @@ const Record = () => {
   const [slides, setSlides] = useState([]);
   const [data, setData] = useState();
   const [program, setProgram] = useState();
+  const [recordingReady, setRecordingReady] = useState(false);
 
   const monitorRef = useRef(null);
   const presCanvasRef = useRef(document.createElement("canvas"));
   const currentSlide = useRef(0);
   const videoRef = useRef(document.createElement("video"));
   const frameRef = useRef(document.createElement("img"));
+  const recorderRef = useRef();
+  const chunksRef = useRef();
+  const recordingRef = useRef();
+  const blobURLRef = useRef();
+
+  let interval;
+  let recording;
 
   const scale = 94;
   const mediaOpts = {
@@ -111,31 +119,27 @@ const Record = () => {
   }, [recordingStarted]);
 
   useEffect(() => {
-    if (recStream) {
-      mediaStream.getAudioTracks.forEach(t => recStream.addTrack(t));
+    if (mediaStream && recStream) {
+      mediaStream.getAudioTracks().forEach((t) => recStream.addTrack(t));
+      console.log("done");
     }
     setIsRecording(true);
-  }, [recStream]);
+  }, [mediaStream, recStream]);
 
   useEffect(() => {
     if (isRecording && recStream) {
-      const recorder = new MediaRecorder(recStream, { type: "video/webm" });
-      const chunks = [];
-      recorder.addEventListener("dataavailable", (event) => {
+      recorderRef.current = new MediaRecorder(recStream, {
+        type: "video/webm",
+      });
+      chunksRef.current = [];
+      recorderRef.current.addEventListener("dataavailable", (event) => {
         if (typeof event.data === "undefined") return;
         if (event.data.size === 0) return;
-        chunks.push(event.data);
+        chunksRef.current.push(event.data);
       });
-      recorder.start();
-      const interval = setInterval(() => setTime(t => t + 1), 1000);
-      recorder.addEventListener("stop", () => {
-        mediaStream.getTracks().forEach(track => track.stop());
-        const recording = new Blob(chunks, {
-          type: "video/webm",
-        });
-        // renderRecording(recording);
-        chunks = [];
-      });
+      recorderRef.current.start();
+      interval = setInterval(() => setTime((t) => t + 1), 1000);
+      recorderRef.current.addEventListener("stop", handleStop);
     }
   }, [isRecording, recStream]);
 
@@ -233,6 +237,39 @@ const Record = () => {
     drawSlide(currentSlide.current);
   }
 
+  function handleStop() {
+    clearInterval(interval);
+    mediaStream.getTracks().forEach((track) => track.stop());
+    recordingRef.current = new Blob(chunksRef.current, {
+      type: "video/webm",
+    });
+    blobURLRef.current = URL.createObjectURL(recordingRef.current);
+    chunksRef.current = [];
+    setRecordingReady(true);
+  }
+
+  if (recordingReady) {
+    return (
+      <div className="p-5">
+        <h2>
+          {data && data.presentationTitle} /{" "}
+          <small className="text-muted">
+            by {data && data.presenterFirstName}{" "}
+            {data && data.presenterLastName}
+          </small>
+        </h2>
+        <hr />
+        <div className="embed-responsive embed-responsive-16by9">
+          <video
+            className="video-player"
+            src={blobURLRef.current || ""}
+            controls
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div id="recordingLayout">
       <div id="slideDeck" className="bg-light shadow p-3">
@@ -312,7 +349,11 @@ const Record = () => {
                 </div>
                 <Button
                   color="secondary"
-                  onClick={() => setRecordingStarted(false)}
+                  onClick={() => {
+                    setRecordingStarted(false);
+                    setIsRecording(false);
+                    recorderRef.current.stop();
+                  }}
                   disabled={!recordingStarted}
                 >
                   <FontAwesomeIcon icon="square" /> Stop
