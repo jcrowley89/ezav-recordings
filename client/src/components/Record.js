@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Badge, Button, ButtonGroup } from "reactstrap";
 import { Loading, Monitor, Slide } from "./";
 import { apiGet } from "../utils/api";
-import { usePresentation } from "../utils/usePresentation";
 import { MEDIA_URL } from "../utils/constants";
 import { toHHMMSS } from "../utils/helpers";
 import AppContext from "../AppContext";
@@ -12,7 +11,8 @@ import AppContext from "../AppContext";
 const Record = () => {
   const { id } = useParams();
   const { currentUser } = useContext(AppContext);
-  const [numImgsLoaded, setNumImgsLoaded] = useState(0);
+  const [numSlidesLoaded, setNumSlidesLoaded] = useState(0);
+  const [frameLoaded, setFrameLoaded] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const [mediaStream, setMediaStream] = useState();
   const [flagCount, setFlagCount] = useState(0);
@@ -43,7 +43,6 @@ const Record = () => {
 
   useEffect(() => {
     if (currentUser) {
-      console.log(currentUser);
       apiGet(`programs/${currentUser.programId}`).then((res) => {
         setProgram(res.data);
       });
@@ -53,6 +52,7 @@ const Record = () => {
   useEffect(() => {
     if (program) {
       frameRef.current.src = `${MEDIA_URL}${program.frame}.png`;
+      frameRef.current.onload = () => setFrameLoaded(true);
     }
   }, [program]);
 
@@ -69,41 +69,57 @@ const Record = () => {
 
   useEffect(() => {
     if (isReady) {
+      navigator.mediaDevices
+        .getUserMedia(mediaOpts)
+        .then((stream) => setMediaStream(stream));
+    }
+  }, [isReady]);
+
+  useEffect(() => {
+    if (isReady && mediaStream) {
       videoRef.current.srcObject = mediaStream;
       videoRef.current.oncanplay = handleCanPlay;
       videoRef.current.muted = true;
     }
-  }, [isReady]);
+  }, [isReady, mediaStream]);
+
+  useEffect(() => {
+    if (isPlaying) {
+      const videoHeight = videoRef.current.srcObject
+        .getVideoTracks()[0]
+        .getSettings().height;
+      const videoWidth = videoRef.current.srcObject
+        .getVideoTracks()[0]
+        .getSettings().width;
+      update(
+        videoRef.current,
+        presCanvasRef.current,
+        monitorRef.current.getContext("2d"),
+        frameRef.current,
+        videoWidth,
+        videoHeight
+      );
+    }
+  }, [isPlaying]);
 
   // TODO: Cleanup :/
-  // useEffect(() => () => {
-  //   mediaStream.getTracks().forEach((track) => {
-  //     track.stop();
-  //   });
-  // }, [mediaStream]);
+  useEffect(() => {
+    if (mediaStream) {
+      return () => {
+        mediaStream.getTracks().forEach((track) => {
+          track.stop();
+        });
+      };
+    }
+  }, [mediaStream]);
 
-  async function getStream() {
-    const stream = await navigator.mediaDevices.getUserMedia(mediaOpts);
-    setMediaStream(stream);
-    setIsReady(true);
-  }
+  // async function getStream() {
+  //   setIsReady(true);
+  // }
 
   function handleCanPlay() {
     videoRef.current.play();
-    const videoHeight = videoRef.current.srcObject
-      .getVideoTracks()[0]
-      .getSettings().height;
-    const videoWidth = videoRef.current.srcObject
-      .getVideoTracks()[0]
-      .getSettings().width;
-    update(
-      videoRef.current,
-      presCanvasRef.current,
-      monitorRef.current.getContext("2d"),
-      frameRef.current,
-      videoWidth,
-      videoHeight
-    );
+    setIsPlaying(true);
   }
 
   function update(video, presCanvas, videoCtx, frame, videoWidth, videoHeight) {
@@ -135,7 +151,7 @@ const Record = () => {
     );
   }
 
-  if (presCanvasRef.current && numImgsLoaded == data?.numSlides) {
+  if (presCanvasRef.current && numSlidesLoaded == data?.numSlides) {
     const firstSlide = document.querySelector("img.slide");
     if (firstSlide) {
       presCanvasRef.current.width = firstSlide.naturalWidth;
@@ -195,7 +211,7 @@ const Record = () => {
               i={i}
               key={i}
               onClick={() => drawSlide(i)}
-              onLoad={() => setNumImgsLoaded((prevNum) => prevNum + 1)}
+              onLoad={() => setNumSlidesLoaded((prevNum) => prevNum + 1)}
             />
           ))}
       </div>
@@ -208,16 +224,18 @@ const Record = () => {
           </small>
         </h2>
         <hr />
-        {numImgsLoaded !== data?.numSlides ? (
+        {numSlidesLoaded !== data?.numSlides ? (
           <>
             <Loading />
             <div className="text-center">
               <h3>Loading Slide Deck...</h3>
-              <h4>({numImgsLoaded} of {data?.numSlides} slides)</h4>
+              <h4>
+                ({numSlidesLoaded} of {data?.numSlides} slides)
+              </h4>
             </div>
           </>
         ) : null}
-        {!isReady && numImgsLoaded == data?.numSlides ? (
+        {!isReady && numSlidesLoaded == data?.numSlides && frameLoaded ? (
           <div className="d-flex justify-content-center p-5">
             <div>
               <h3>Grant Access to Media Devices</h3>
@@ -227,7 +245,7 @@ const Record = () => {
                 be prompted to grant permission. Please click on "allow" if
                 prompted.
               </p>
-              <Button color="primary" onClick={getStream}>
+              <Button color="primary" onClick={() => setIsReady(true)}>
                 Start
               </Button>
             </div>
