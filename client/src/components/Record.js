@@ -121,7 +121,6 @@ const Record = () => {
   useEffect(() => {
     if (mediaStream && recStream) {
       mediaStream.getAudioTracks().forEach((t) => recStream.addTrack(t));
-      console.log("done");
     }
     setIsRecording(true);
   }, [mediaStream, recStream]);
