@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Badge, Button, ButtonGroup } from "reactstrap";
+import { Badge, Button, ButtonGroup, Container } from "reactstrap";
 import { Loading, Monitor, Slide } from "./";
 import { apiGet } from "../utils/api";
 import { MEDIA_URL } from "../utils/constants";
@@ -35,6 +35,7 @@ const Record = () => {
   const chunksRef = useRef();
   const recordingRef = useRef();
   const blobURLRef = useRef();
+  const flagsRef = useRef([]);
 
   let interval;
   let recording;
@@ -247,9 +248,14 @@ const Record = () => {
     setRecordingReady(true);
   }
 
+  function flag() {
+    setFlagCount(fc => fc + 1);
+    flagsRef.current.push(toHHMMSS(time));
+  }
+
   if (recordingReady) {
     return (
-      <div className="p-5">
+      <Container className="p-5">
         <h2>
           {data && data.presentationTitle} /{" "}
           <small className="text-muted">
@@ -260,12 +266,24 @@ const Record = () => {
         <hr />
         <div className="embed-responsive embed-responsive-16by9">
           <video
-            className="video-player"
             src={blobURLRef.current || ""}
             controls
           />
         </div>
-      </div>
+        <div id="flags" className="bg-light m-3 p-4">
+          <h4>Flags</h4>
+          {flagsRef.current && flagsRef.current.length > 0 ? (
+            <>
+            {flagsRef.current.map((f, i) => <div>Flag {i + 1}: {f}</div>)}
+            </>
+          ) : "No flags"}
+        </div>
+        <div className="p-2">
+          <Button block color="primary">
+            Upload
+          </Button>
+        </div>
+      </Container>
     );
   }
 
@@ -359,7 +377,7 @@ const Record = () => {
                 </Button>
                 <Button
                   color="warning"
-                  onClick={() => setFlagCount(flagCount + 1)}
+                  onClick={flag}
                   disabled={!recordingStarted}
                 >
                   <FontAwesomeIcon icon="flag" /> Flag{" "}
