@@ -19,7 +19,7 @@ router.delete("/programs/:id", authorize("anyAdmin"), controllers.program.delete
 
 router.get("/recordings", controllers.recording.index);
 router.post("/recordings", upload.presentation, convertPresentation, controllers.recording.create);
-router.get("/recordings/getSubmitURL", controllers.recording.getSubmitURL);
+router.get("/recordings/getSubmitURL/:key", controllers.recording.getSubmitURL);
 router.get("/recordings/:id", controllers.recording.read);
 router.put("/recordings/:id", controllers.recording.update);
 router.delete("/recordings/:id", authorize("anyAdmin"), controllers.recording.delete);

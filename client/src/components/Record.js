@@ -254,24 +254,19 @@ const Record = () => {
   }
 
   function submitRecording() {
-    // const fd = new FormData();
-    // fd.append("id", id);
-    // fd.append("flags", JSON.stringify(flags));
-    // fd.append("video", recordingRef.current, "recordedvideo.webm");
-    apiGet("recordings/getSubmitUrl")
+    const key = `recording-${Date.now()}.webm`
+
+    apiGet(`recordings/getSubmitUrl/${key}`)
       .then(
         (res) => {
-          console.log("hi from axios?");
           const url = res.data.url;
           s3put(url, recordingRef.current)
             .then((res) => console.log(res))
             .catch((err) => console.log("inner", err));
-        },
-        (x) => console.log(x, "ljhgkjvgkhgv")
+        }
       )
       .catch((err) => {
         // handle error
-        console.log("outer", err);
       });
   }
 

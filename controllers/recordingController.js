@@ -63,11 +63,13 @@ exports.create = async (req, res) => {
 };
 
 exports.getSubmitURL = async (req, res) => {
+  const { key } = req.params;
+
   s3.getSignedUrl(
     "putObject",
     {
       Bucket: "ezav-recordings",
-      Key: `${Date.now().toString()}.webm`,
+      Key: key,
       ContentType: "video/webm",
     },
     (err, url) => {
