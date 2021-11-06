@@ -56,8 +56,11 @@ const RecordingRow = ({ recording, onClick }) => {
         </td>
       ) : (
         <td>
-          {currentUser?.role === "presenter" && currentUser?.id === recording.presenterId ? (
+          {currentUser?.role === "presenter" && currentUser?.id === recording.presenterId && !recording.completedAt ? (
             <Button size="sm" color="danger" tag={Link} to={`/record/${recording.id}`} ><FontAwesomeIcon icon="circle" className="mr-2" />Record</Button>
+          ) : null}
+                    {currentUser?.role === "presenter" && currentUser?.id === recording.presenterId && recording.completedAt ? (
+            <Button size="sm" color="dark" tag={Link} to={`/recording/${recording.id}`} ><FontAwesomeIcon icon="eye" className="mr-2" />View</Button>
           ) : null}
         </td>
       )}

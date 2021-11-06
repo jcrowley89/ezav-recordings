@@ -266,6 +266,7 @@ const Record = () => {
               apiPut(`recordings/${id}`, {
                 recordingFile: key,
                 flags: flagsRef.current,
+                completedAt: new Date(),
               }).then(() => setIsUploaded(true)).catch(err => console.log(err));
             })
             .catch((err) => console.log("inner", err));
