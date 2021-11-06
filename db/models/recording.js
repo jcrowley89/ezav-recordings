@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       this.belongsTo(models.Presenter, { onDelete: "cascade", hooks:true });
+      this.hasMany(models.Flag, { onDelete: "cascade", hooks: true});
     }
   }
   Recording.init(

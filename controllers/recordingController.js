@@ -1,5 +1,5 @@
 const sequelize = require("sequelize");
-const { Recording, Presenter, Program } = require("../db/models");
+const { Recording, Presenter, Program, Flag } = require("../db/models");
 const path = require("path");
 const countSlides = require("../utils/countSlides");
 const s3 = require("../utils/s3");
@@ -90,6 +90,12 @@ exports.read = async (req, res) => {
       include: [{ model: Program, attributes: ["eventTitle", "clientName"] }],
     },
   });
+  const flags = await Flag.findAll({
+    where: {
+      RecordingId: id,
+    }
+  });
+  const flagsArr = flags.map(flag => flag.time);
   const result = {
     id: recording.id,
     presentationTitle: recording.presentationTitle,
@@ -98,6 +104,8 @@ exports.read = async (req, res) => {
     presenterLastName: recording.Presenter.lastName,
     presenterEmail: recording.Presenter.email,
     presentationFile: recording.presentationFile,
+    recordingFile: recording.recordingFile,
+    flags: flagsArr,
     numSlides: recording.numSlides,
     programId: recording.Presenter.Program.id,
     eventTitle: recording.Presenter.Program.eventTitle,
@@ -112,6 +120,15 @@ exports.read = async (req, res) => {
 exports.update = async (req, res) => {
   const { id } = req.params;
   await Recording.update(req.body, { where: { id: id } });
+  if (req.body.flags) {
+    const promises = req.body.flags.map(flag => {
+      return Flag.create({
+        RecordingId: id,
+        time: flag,
+      });
+    });
+    await Promise.all(promises);
+  }
   res.json({ msg: "Update successful" });
 };
 

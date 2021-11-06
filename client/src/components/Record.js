@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Badge, Button, ButtonGroup, Container } from "reactstrap";
 import { Loading, Monitor, Slide } from "./";
-import { apiGet, s3put, apiPost } from "../utils/api";
+import { apiGet, s3put, apiPost, apiPut } from "../utils/api";
 import { MEDIA_URL } from "../utils/constants";
 import { toHHMMSS } from "../utils/helpers";
 import AppContext from "../AppContext";
@@ -25,6 +25,7 @@ const Record = () => {
   const [data, setData] = useState();
   const [program, setProgram] = useState();
   const [recordingReady, setRecordingReady] = useState(false);
+  const [isUploaded, setIsUploaded] = useState(false);
 
   const monitorRef = useRef(null);
   const presCanvasRef = useRef(document.createElement("canvas"));
@@ -261,13 +262,22 @@ const Record = () => {
         (res) => {
           const url = res.data.url;
           s3put(url, recordingRef.current)
-            .then((res) => console.log(res))
+            .then((res) => {
+              apiPut(`recordings/${id}`, {
+                recordingFile: key,
+                flags: flagsRef.current,
+              }).then(() => setIsUploaded(true)).catch(err => console.log(err));
+            })
             .catch((err) => console.log("inner", err));
         }
       )
       .catch((err) => {
         // handle error
       });
+  }
+
+  if (isUploaded) {
+    return <h1>Uploaded!</h1>
   }
 
   if (recordingReady) {

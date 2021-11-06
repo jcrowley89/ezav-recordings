@@ -17,10 +17,17 @@ const Recording = () => {
   }, [id]);
 
   function listSlides() {
-    const prefix = recording.presentationFile.split('.')[0];
-    let list = []
-    for (let i=1; i <= recording.numSlides; i++) {
-      list.push(<img src={`${MEDIA_URL}${prefix}-out-${i}.png`} alt={`slide ${i}`} key={i} className="slide-preview" />);
+    const prefix = recording.presentationFile.split(".")[0];
+    let list = [];
+    for (let i = 1; i <= recording.numSlides; i++) {
+      list.push(
+        <img
+          src={`${MEDIA_URL}${prefix}-out-${i}.png`}
+          alt={`slide ${i}`}
+          key={i}
+          className="slide-preview"
+        />
+      );
     }
     return list;
   }
@@ -52,6 +59,25 @@ const Recording = () => {
               <th>Presenter Email:</th>
               <td>{recording && recording.presenterEmail}</td>
             </tr>
+            {recording && recording.recordingFile ? (
+              <tr>
+                <th>Recorded Video File:</th>
+                <td>
+                  {" "}
+                  <a
+                    href={recording && `${MEDIA_URL}${recording.recordingFile}`}
+                  >
+                    {recording && `${recording.recordingFile}`}
+                  </a>
+                </td>
+              </tr>
+            ) : null}
+            {recording && recording.flags && recording.flags.length > 0 ? (
+              <tr>
+                <th>Flags:</th>
+                <td>{recording.flags.map(f => <span>{f}, </span>)}</td>
+              </tr>
+            ) : null}
             <tr>
               <th>Presentation Source File:</th>
               <td>
@@ -66,9 +92,7 @@ const Recording = () => {
             </tr>
             <tr>
               <th>Presentation Output Files:</th>
-              <td>
-                  {recording && listSlides()}
-              </td>
+              <td>{recording && listSlides()}</td>
             </tr>
             <tr>
               <th>Created At:</th>
