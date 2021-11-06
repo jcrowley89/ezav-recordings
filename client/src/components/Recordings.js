@@ -37,9 +37,9 @@ const RecordingRow = ({ recording, onClick }) => {
 
       <td>
         {recording.completedAt ? (
-          <Badge color="success">Completed</Badge>
+          <Badge color="success" className="py-2 px-3"><FontAwesomeIcon icon="check" className="mr-2" />Completed</Badge>
         ) : (
-          <Badge color="warning">Pending</Badge>
+          <Badge color="warning" className="py-2 px-3"><FontAwesomeIcon icon="clock" className="mr-2" />Pending</Badge>
         )}
       </td>
 

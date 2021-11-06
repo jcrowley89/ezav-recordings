@@ -23,6 +23,8 @@ import {
   faChalkboardTeacher,
   faArrowRight,
   faUpload,
+  faClock,
+  faCheck,
 } from "@fortawesome/free-solid-svg-icons";
 
 // import "bootstrap/dist/css/bootstrap.css";
@@ -73,7 +75,9 @@ library.add(
   faEye,
   faChalkboardTeacher,
   faArrowRight,
-  faUpload
+  faUpload,
+  faClock,
+  faCheck,
 );
 
 function App() {
