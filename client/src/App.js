@@ -77,82 +77,63 @@ library.add(
   faArrowRight,
   faUpload,
   faClock,
-  faCheck,
+  faCheck
 );
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState();
-  const ctx = {
-    isLoggedIn: isLoggedIn,
-    setIsLoggedIn: setIsLoggedIn,
-    currentUser: currentUser,
-    setCurrentUser: setCurrentUser,
-  };
 
-  useEffect(
-    () => setIsLoggedIn(localStorage.getItem("token") ? true : false),
-    []
-  );
+  // useEffect(() => {
+  //   if (hasToken && !currentUser) {
+  //     apiGet("getCurrentUser").then((res) => {
+  //       if (res.data && !res.data.user) {
+  //         localStorage.removeItem("token");
+  //       } else {
+  //         setCurrentUser(res.data.user);
+  //       }
+  //     });
+  //   }
+  // }, []);
 
   useEffect(() => {
-    if (isLoggedIn && !currentUser) {
-      apiGet("getCurrentUser").then((res) => {
-        if (res.data && !res.data.user) {
-          localStorage.removeItem("token");
-          setIsLoggedIn(false);
-        } else {
-          setCurrentUser(res.data.user);
-          setIsLoggedIn(true);
-        }
-      });
-    }
-  }, [currentUser, isLoggedIn]);
+    apiGet("getCurrentUser").then((res) => {
+      if (res.data && !res.data.user) {
+        localStorage.removeItem("token");
+      } else {
+        setCurrentUser(res.data.user);
+      }
+    });
+  }, []);
 
   return (
-    <AppContext.Provider value={ctx}>
+    <AppContext.Provider
+      value={{ currentUser, setCurrentUser }}
+    >
       <Switch>
-        {!isLoggedIn ? (
-          <Route path="/" component={Login} />
-        ) : (
-          <>
-            <PrivateRoute exact path="/home" component={Home} />
-            <PrivateRoute exact path="/programs" component={Programs} />
-            <PrivateRoute exact path="/new-program" component={NewProgram} />
-            <PrivateRoute exact path="/program/:id" component={Program} />
-            <PrivateRoute
-              exact
-              path="/edit-program/:id"
-              component={EditProgram}
-            />
-            <PrivateRoute exact path="/presenters" component={Presenters} />
-            <PrivateRoute
-              exact
-              path="/new-presenter"
-              component={NewPresenter}
-            />
-            <PrivateRoute exact path="/presenter/:id" component={Presenter} />
-            <PrivateRoute
-              exact
-              path="/edit-presenter/:id"
-              component={EditPresenter}
-            />
-            <PrivateRoute exact path="/recordings" component={Recordings} />
-            <PrivateRoute
-              exact
-              path="/new-recording"
-              component={NewRecording}
-            />
-            <PrivateRoute exact path="/recording/:id" component={Recording} />
-            <PrivateRoute exact path="/record/:id" component={Record} />
-            <PrivateRoute exact path="/admins" component={Admins} />
-            <PrivateRoute exact path="/new-admin" component={NewAdmin} />
-            <PrivateRoute exact path="/admin/:id" component={Admin} />
-            <PrivateRoute exact path="/instructions" component={Instructions} />
-            <PrivateRoute exact path="/faqs" component={FAQs} />
-            <PrivateRoute exact path="/contact" component={Contact} />
-          </>
-        )}
+        <Route exact path="/" component={Login} />
+        <PrivateRoute exact path="/home" component={Home} />
+        <PrivateRoute exact path="/programs" component={Programs} />
+        <PrivateRoute exact path="/new-program" component={NewProgram} />
+        <PrivateRoute exact path="/program/:id" component={Program} />
+        <PrivateRoute exact path="/edit-program/:id" component={EditProgram} />
+        <PrivateRoute exact path="/presenters" component={Presenters} />
+        <PrivateRoute exact path="/new-presenter" component={NewPresenter} />
+        <PrivateRoute exact path="/presenter/:id" component={Presenter} />
+        <PrivateRoute
+          exact
+          path="/edit-presenter/:id"
+          component={EditPresenter}
+        />
+        <PrivateRoute exact path="/recordings" component={Recordings} />
+        <PrivateRoute exact path="/new-recording" component={NewRecording} />
+        <PrivateRoute exact path="/recording/:id" component={Recording} />
+        <PrivateRoute exact path="/record/:id" component={Record} />
+        <PrivateRoute exact path="/admins" component={Admins} />
+        <PrivateRoute exact path="/new-admin" component={NewAdmin} />
+        <PrivateRoute exact path="/admin/:id" component={Admin} />
+        <PrivateRoute exact path="/instructions" component={Instructions} />
+        <PrivateRoute exact path="/faqs" component={FAQs} />
+        <PrivateRoute exact path="/contact" component={Contact} />
       </Switch>
     </AppContext.Provider>
   );

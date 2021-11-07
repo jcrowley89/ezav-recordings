@@ -1,13 +1,14 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Route, Redirect } from "react-router-dom";
 import AppContext from "../AppContext";
+import { apiGet } from "../utils/api";
 
 function PrivateRoute({ component: Component, ...rest }) {
-  const { isLoggedIn } = useContext(AppContext);
+  const { currentUser, setCurrentUser } = useContext(AppContext);
 
-  if (isLoggedIn) return <Route {...rest} render={() => <Component />} />;
+  if (localStorage.getItem("token") === null) return <Redirect to="/" />
 
-  return <Redirect to="/" />;
+  return <Route {...rest} render={() => <Component />} />;
 }
 
 export default PrivateRoute;

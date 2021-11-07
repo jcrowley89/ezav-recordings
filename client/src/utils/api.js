@@ -16,9 +16,12 @@ axios.interceptors.response.use(
 
 function headers() {
   const token = localStorage.getItem("token");
-  return {
-    "x-access-token": `Bearer ${token}`,
-  };
+  if (token) {
+    return {
+      "x-access-token": `Bearer ${token}`,
+    };
+  }
+  return {};
 }
 
 export function apiGet(url) {

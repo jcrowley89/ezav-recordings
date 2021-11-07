@@ -7,7 +7,7 @@ import { apiPost } from "../utils/api";
 import Logo from "../img/ezav_logo.png";
 
 const Login = () => {
-  const { isLoggedIn, setIsLoggedIn, setCurrentUser } = useContext(AppContext);
+  const { currentUser, setCurrentUser } = useContext(AppContext);
   const [msg, setMsg] = useState();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,13 +21,12 @@ const Login = () => {
       if (res.data && res.data.token) {
         localStorage.setItem("token", res.data.token);
         setCurrentUser(res.data.user);
-        setIsLoggedIn(true);
       } else {
         setMsg("There was an error.");
       }
   }
 
-  if (isLoggedIn) return <Redirect to="/home" />;
+  if (currentUser) return <Redirect to="/home" />;
 
   return (
     <div id="login" className="p-5">

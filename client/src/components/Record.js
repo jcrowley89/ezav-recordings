@@ -188,7 +188,7 @@ const Record = () => {
     );
   }
 
-  if (presCanvasRef.current && numSlidesLoaded == data?.numSlides) {
+  if (presCanvasRef.current && numSlidesLoaded === data?.numSlides) {
     const firstSlide = document.querySelector("img.slide");
     if (firstSlide) {
       presCanvasRef.current.width = firstSlide.naturalWidth;
@@ -353,7 +353,7 @@ const Record = () => {
             </div>
           </>
         ) : null}
-        {!isReady && numSlidesLoaded == data?.numSlides && frameLoaded ? (
+        {!isReady && numSlidesLoaded === data?.numSlides && frameLoaded ? (
           <div className="d-flex justify-content-center p-5">
             <div>
               <h3>Grant Access to Media Devices</h3>

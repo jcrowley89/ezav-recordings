@@ -8,7 +8,6 @@ const SidebarTop = () => {
   function handleLogout() {
     localStorage.removeItem("token");
     setCurrentUser(null);
-    setIsLoggedIn(false);
   }
 
   return (
