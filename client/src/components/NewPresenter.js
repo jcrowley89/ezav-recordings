@@ -69,6 +69,7 @@ const NewPresenter = () => {
           setLastName={setLastName}
           email={email}
           setEmail={setEmail}
+          programId={programId}
           setProgramId={setProgramId}
           programs={programs}
           onSubmit={handleSubmit}
