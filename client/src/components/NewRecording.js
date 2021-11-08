@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Redirect } from "react-router-dom";
 import { MainContent } from "./";
 import { apiPostFD } from "../utils/api";
@@ -8,10 +8,17 @@ import { Button, Form, FormGroup, Label, Input, Spinner } from "reactstrap";
 const NewRecording = () => {
   const [submitted, setSubmitted] = useState(false);
   const [presentationTitle, setPresentationTitle] = useState("");
-  const [presentationFile, setPresentationFile] = useState();
+  const [presentationFile, setPresentationFile] = useState(undefined);
   const [disabled, setDisabled] = useState(false);
   const [newId, setNewId] = useState();
+  const [canSubmit, setCanSubmit] = useState(false);
   const { currentUser } = useContext(AppContext);
+
+  useEffect(() => {
+    if (presentationTitle !== "" && presentationFile !== undefined) {
+      setCanSubmit(true);
+    }
+  }, [presentationTitle, presentationFile]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -39,6 +46,7 @@ const NewRecording = () => {
           <FormGroup>
             <Label>Presentation Title:</Label>
             <Input
+              required
               disabled={disabled}
               value={presentationTitle}
               onChange={(e) => setPresentationTitle(e.target.value)}
@@ -47,15 +55,23 @@ const NewRecording = () => {
           <FormGroup>
             <Label>Upload Presentation File:</Label>
             <Input
+              required
               disabled={disabled}
               type="file"
               onChange={(e) => setPresentationFile(e.target.files[0])}
             />
           </FormGroup>
           {disabled ? (
-            <div><Spinner /> Uploading and Processing... (This may take a few minutes)</div>
+            <div>
+              <Spinner /> Uploading and Processing... (This may take a few
+              minutes)
+            </div>
           ) : (
-            <Button color="primary" className="mt-3 rounded-pill">
+            <Button
+              color="primary"
+              className="mt-3 rounded-pill"
+              disabled={!canSubmit}
+            >
               Submit
             </Button>
           )}

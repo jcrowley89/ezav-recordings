@@ -13,6 +13,7 @@ const NewPresenter = () => {
   const [email, setEmail] = useState("");
   const [programId, setProgramId] = useState("");
   const [msg, setMsg] = useState();
+  const [canSubmit, setCanSubmit] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -20,6 +21,17 @@ const NewPresenter = () => {
       setPrograms(result.data);
     })();
   }, []);
+
+  useEffect(() => {
+    if (
+      firstName !== "" &&
+      lastName !== "" &&
+      email !== "" &&
+      programId !== ""
+    ) {
+      setCanSubmit(true);
+    }
+  }, [firstName, lastName, email, programId]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -47,7 +59,9 @@ const NewPresenter = () => {
   return (
     <div id="newRecording">
       <MainContent heading="Add New Presenter">
-      {msg ? <UncontrolledAlert color="danger">{msg}</UncontrolledAlert> : null}
+        {msg ? (
+          <UncontrolledAlert color="danger">{msg}</UncontrolledAlert>
+        ) : null}
         <PresenterForm
           firstName={firstName}
           setFirstName={setFirstName}
@@ -59,6 +73,7 @@ const NewPresenter = () => {
           programs={programs}
           onSubmit={handleSubmit}
           disabled={disabled}
+          canSubmit={canSubmit}
         />
       </MainContent>
     </div>

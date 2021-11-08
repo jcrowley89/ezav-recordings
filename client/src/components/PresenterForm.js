@@ -21,7 +21,8 @@ const PresenterForm = ({
     setProgramId,
     programs,
     onSubmit,
-    disabled
+    disabled,
+    canSubmit,
 }) => {
   return (
     <Form onSubmit={onSubmit} className="p-4 bg-light">
@@ -91,7 +92,7 @@ const PresenterForm = ({
         </Col>
       </Row>
       {disabled ? <Spinner /> : (
-      <Button color="primary" className="mt-3 rounded-pill">
+      <Button color="primary" className="mt-3 rounded-pill" disabled={!canSubmit}>
         Submit
       </Button>
       )}

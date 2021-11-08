@@ -11,6 +11,7 @@ const EditPresenter = () => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [programId, setProgramId] = useState("");
+  const [canSubmit, setCanSubmit] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -28,6 +29,17 @@ const EditPresenter = () => {
       setProgramId(res.data.programId);
     })();
   }, [id]);
+
+  useEffect(() => {
+    if (
+      firstName !== "" &&
+      lastName !== "" &&
+      email !== "" &&
+      programId !== ""
+    ) {
+      setCanSubmit(true);
+    }
+  }, [firstName, lastName, email, programId]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -57,6 +69,7 @@ const EditPresenter = () => {
           setProgramId={setProgramId}
           programs={programs}
           onSubmit={handleSubmit}
+          canSubmit={canSubmit}
         />
       </MainContent>
     </div>

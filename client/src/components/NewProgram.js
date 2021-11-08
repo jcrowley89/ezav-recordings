@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Redirect } from "react-router-dom";
 import { apiPostFD } from "../utils/api";
 import { MainContent } from "./";
@@ -22,6 +22,20 @@ const NewProgram = () => {
   const [logoFile, setLogoFile] = useState(undefined);
   const [frameFile, setFrameFile] = useState(undefined);
   const [disabled, setDisabled] = useState(false);
+  const [canSubmit, setCanSubmit] = useState(false);
+
+  useEffect(() => {
+    if (
+      clientName !== "" &&
+      eventTitle !== "" &&
+      beginsOn !== null &&
+      endsOn !== null &&
+      logoFile !== undefined &&
+      frameFile !== undefined
+    ) {
+      setCanSubmit(true);
+    }
+  }, [clientName, eventTitle, beginsOn, endsOn, logoFile, frameFile]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -119,7 +133,11 @@ const NewProgram = () => {
               <Spinner /> Uploading... (This may take a few minutes)
             </div>
           ) : (
-            <Button color="primary" className="mt-3 rounded-pill">
+            <Button
+              color="primary"
+              className="mt-3 rounded-pill"
+              disabled={!canSubmit}
+            >
               Submit
             </Button>
           )}

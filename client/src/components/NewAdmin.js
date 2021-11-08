@@ -1,16 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Redirect } from "react-router";
 import { apiPost } from "../utils/api";
 import { MainContent } from "./";
-import {
-  Row,
-  Col,
-  Button,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-} from "reactstrap";
+import { Row, Col, Button, Form, FormGroup, Label, Input } from "reactstrap";
 
 const NewAdmin = () => {
   const [submitted, setSubmitted] = useState(false);
@@ -19,6 +11,7 @@ const NewAdmin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPwd, setConfirmPwd] = useState("");
+  const [canSubmit, setCanSubmit] = useState(false);
 
   async function submitAdmin() {
     const payload = {
@@ -30,6 +23,18 @@ const NewAdmin = () => {
     await apiPost("admins", payload);
     setSubmitted(true);
   }
+
+  useEffect(() => {
+    if (
+      firstName !== "" &&
+      lastName !== "" &&
+      email !== "" &&
+      password !== "" &&
+      password === confirmPwd
+    ) {
+      setCanSubmit(true);
+    }
+  }, [firstName, lastName, email, password, confirmPwd]);
 
   if (submitted) return <Redirect to="/admins" />;
 
@@ -47,7 +52,7 @@ const NewAdmin = () => {
                 <Input
                   placeholder="First Name"
                   value={firstName}
-                  onChange={e => setFirstName(e.target.value)}
+                  onChange={(e) => setFirstName(e.target.value)}
                 />
               </FormGroup>
             </Col>
@@ -59,7 +64,7 @@ const NewAdmin = () => {
                 <Input
                   placeholder="Last Name"
                   value={lastName}
-                  onChange={e => setLastName(e.target.value)}
+                  onChange={(e) => setLastName(e.target.value)}
                 />
               </FormGroup>
             </Col>
@@ -74,7 +79,7 @@ const NewAdmin = () => {
                   placeholder="Email Address"
                   type="email"
                   value={email}
-                  onChange={e => setEmail(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </FormGroup>
             </Col>
@@ -89,7 +94,7 @@ const NewAdmin = () => {
                   placeholder="Password"
                   type="password"
                   value={password}
-                  onChange={e => setPassword(e.target.value)}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </FormGroup>
             </Col>
@@ -108,7 +113,7 @@ const NewAdmin = () => {
               </FormGroup>
             </Col>
           </Row>
-          <Button color="primary" className="mt-3" onClick={submitAdmin}>
+          <Button color="primary" className="mt-3 rounded-pill" onClick={submitAdmin} disabled={!canSubmit}>
             Submit
           </Button>
         </Form>
