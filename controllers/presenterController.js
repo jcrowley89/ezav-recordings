@@ -25,6 +25,8 @@ exports.index = async (req, res) => {
 
 exports.create = async (req, res) => {
   const { firstName, lastName, email, programId } = req.body;
+  const presenter = await Presenter.findOne({ where: { email: email}});
+  if (presenter) return res.status(409).json({msg: "Email already taken"});
   await Presenter.create({
     firstName: firstName,
     lastName: lastName,
@@ -32,7 +34,7 @@ exports.create = async (req, res) => {
     code: crypto.randomBytes(6).toString("base64").toUpperCase(),
     ProgramId: programId,
   });
-  res.json({ msg: "Success" });
+  return res.json({ msg: "Success" });
 };
 
 exports.read = async (req, res) => {
