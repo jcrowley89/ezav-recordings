@@ -8,9 +8,9 @@ axios.interceptors.response.use(
       if (window.location.pathname !== "/") window.location = "/";
     }
     if (error.response && error.response.status === 403) {
-        // window.location = "/home";
+      if (window.location.pathname !== "/") window.location = "/home";
     }
-    return error;
+    return Promise.reject(error);
   }
 );
 
@@ -50,7 +50,6 @@ export function s3put(url, object, onUploadProgress) {
     data: object,
     headers: {
       "Content-Type": "video/webm",
-      "Access-Control-Allow-Origin": "*",
     },
     onUploadProgress: onUploadProgress,
   });
