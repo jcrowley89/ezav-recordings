@@ -9,9 +9,9 @@ const tokenExp = "7d";
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
-  const user = await Admin.findOne({ where: { email: email } });
+  const user = await Admin.findOne({ where: { email: email.toLowerCase() } });
   if (!user || !bcrypt.compareSync(password, user.password)) {
-    const presenter = await Presenter.findOne({ where: { email: email } });
+    const presenter = await Presenter.findOne({ where: { email: email.toLowerCase() } });
     if (!presenter || presenter.code !== password) {
       res.status(401).json({ msg: "Incorrect email or password." });
       return;

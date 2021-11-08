@@ -24,7 +24,7 @@ const NewAdmin = () => {
     const payload = {
       firstName,
       lastName,
-      email,
+      email: email.toLowerCase(),
       password,
     };
     await apiPost("admins", payload);
