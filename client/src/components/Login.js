@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Redirect } from "react-router";
-import { UncontrolledAlert, Button, Container, Form, Input } from "reactstrap";
+import { Alert, Button, Container, Form, Input } from "reactstrap";
 import AppContext from "../AppContext";
 import { apiPost } from "../utils/api";
 
@@ -11,19 +11,26 @@ const Login = () => {
   const [msg, setMsg] = useState();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
-      const res = await apiPost("login", {
-        email,
-        password,
-      });
+    apiPost("login", {
+      email,
+      password,
+    }).then(res => {
       if (res.data && res.data.token) {
         localStorage.setItem("token", res.data.token);
         setCurrentUser(res.data.user);
       } else {
         setMsg("There was an error.");
       }
+    }).catch(err => {
+      if (err.response && err.response.status === 401) {
+        setShowAlert(true);
+      setMsg("Incorrect email and/or password.");
+      }
+    });
   }
 
   if (currentUser) return <Redirect to="/home" />;
@@ -35,7 +42,7 @@ const Login = () => {
           <img src={Logo} alt="profile-img" className="profile-img-card" />
           {/* <h3 className="mt-3">Login</h3> */}
           <hr />
-          {msg ? <UncontrolledAlert color="danger">{msg}</UncontrolledAlert> : null}
+          {showAlert ? <Alert color="danger" toggle={() => setShowAlert(false)}>{msg}</Alert> : null}
           <Form onSubmit={handleSubmit}>
             <div className="form-group">
               <label htmlFor="username">Email Address</label>
