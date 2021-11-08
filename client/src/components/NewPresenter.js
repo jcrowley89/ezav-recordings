@@ -1,5 +1,7 @@
+import { SecretsManager } from "aws-sdk";
 import React, { useState, useEffect } from "react";
 import { Redirect } from "react-router";
+import { UncontrolledAlert } from "reactstrap";
 import { apiGet, apiPost } from "../utils/api";
 import { MainContent, PresenterForm } from "./";
 
@@ -11,6 +13,7 @@ const NewPresenter = () => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [programId, setProgramId] = useState("");
+  const [msg, setMsg] = useState();
 
   useEffect(() => {
     (async () => {
@@ -25,11 +28,19 @@ const NewPresenter = () => {
     const payload = {
       firstName,
       lastName,
-      email,
+      email: email.toLowerCase(),
       programId,
     };
-    await apiPost("presenters", payload);
-    setSubmitted(true);
+    apiPost("presenters", payload)
+      .then(() => {
+        setSubmitted(true);
+      })
+      .catch((err) => {
+        if (err && err.response) {
+          setMsg(err.response.data.msg);
+          setDisabled(false);
+        }
+      });
   }
 
   if (submitted) return <Redirect to="/presenters" />;
@@ -37,6 +48,7 @@ const NewPresenter = () => {
   return (
     <div id="newRecording">
       <MainContent heading="Add New Presenter">
+      {msg ? <UncontrolledAlert color="danger">{msg}</UncontrolledAlert> : null}
         <PresenterForm
           firstName={firstName}
           setFirstName={setFirstName}
