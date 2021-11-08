@@ -77,12 +77,12 @@ const PresenterForm = ({
               Program<span className="text-danger">*</span>
             </Label>
             <Input type="select" value={programId} disabled={disabled} onChange={(e) => setProgramId(e.target.value)}>
-              <option disabled selected>
+              {/* <option disabled selected>
                 Select program...
-              </option>
+              </option> */}
               {programs
                 ? programs.map((p) => (
-                    <option value={p.id}>
+                    <option value={p.id} key={p.id}>
                       {p.clientName} - {p.eventTitle}
                     </option>
                   ))
