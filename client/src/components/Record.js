@@ -285,6 +285,14 @@ const Record = () => {
       });
   }
 
+  function downloadBackup() {
+    const link = document.createElement("a");
+    link.href = blobURLRef.current;
+    link.target = "_blank";
+    link.download = "recording-backup";
+    link.click();
+  }
+
   if (isUploadError) {
     return (
       <Container>
@@ -357,6 +365,8 @@ const Record = () => {
           )}
         </div>
         <div className="p-2">
+          <Button block color="light"  onClick={downloadBackup} className="shadow"><FontAwesomeIcon icon="download" className="mr-2" />Download Backup Copy (Recommended)</Button>
+          <div className="py-4">Ready to Submit your video? Click "upload" below!</div>
           <Button block color="primary" onClick={submitRecording}>
             <FontAwesomeIcon icon="upload" className="mr-2" />
             Upload

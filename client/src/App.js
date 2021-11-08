@@ -26,6 +26,7 @@ import {
   faClock,
   faCheck,
   faExclamationCircle,
+  faDownload,
 } from "@fortawesome/free-solid-svg-icons";
 
 // import "bootstrap/dist/css/bootstrap.css";
@@ -80,6 +81,7 @@ library.add(
   faClock,
   faCheck,
   faExclamationCircle,
+  faDownload,
 );
 
 function App() {
