@@ -96,19 +96,21 @@ function App() {
   // }, []);
 
   useEffect(() => {
-    apiGet("getCurrentUser").then((res) => {
-      if (res.data && !res.data.user) {
-        localStorage.removeItem("token");
-      } else {
-        setCurrentUser(res.data.user);
-      }
-    });
+    if (localStorage.getItem("token")) {
+      apiGet("getCurrentUser")
+        .then((res) => {
+          if (res.data && !res.data.user) {
+            localStorage.removeItem("token");
+          } else {
+            setCurrentUser(res.data.user);
+          }
+        })
+        .catch((err) => console.log(err));
+    }
   }, []);
 
   return (
-    <AppContext.Provider
-      value={{ currentUser, setCurrentUser }}
-    >
+    <AppContext.Provider value={{ currentUser, setCurrentUser }}>
       <Switch>
         <Route exact path="/" component={Login} />
         <PrivateRoute exact path="/home" component={Home} />
