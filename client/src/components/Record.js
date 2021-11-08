@@ -384,6 +384,14 @@ const Record = () => {
             </div>
           </>
         ) : null}
+        {!isReady && numSlidesLoaded === data?.numSlides && !frameLoaded ? (
+          <>
+          <Loading />
+          <div className="text-center">
+            <h3>Loading Video Background...</h3>
+          </div>
+        </>
+        ) : null}
         {!isReady && numSlidesLoaded === data?.numSlides && frameLoaded ? (
           <div className="d-flex justify-content-center p-5">
             <div>
