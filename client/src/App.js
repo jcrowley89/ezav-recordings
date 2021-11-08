@@ -25,6 +25,7 @@ import {
   faUpload,
   faClock,
   faCheck,
+  faExclamationCircle,
 } from "@fortawesome/free-solid-svg-icons";
 
 // import "bootstrap/dist/css/bootstrap.css";
@@ -77,23 +78,12 @@ library.add(
   faArrowRight,
   faUpload,
   faClock,
-  faCheck
+  faCheck,
+  faExclamationCircle,
 );
 
 function App() {
   const [currentUser, setCurrentUser] = useState();
-
-  // useEffect(() => {
-  //   if (hasToken && !currentUser) {
-  //     apiGet("getCurrentUser").then((res) => {
-  //       if (res.data && !res.data.user) {
-  //         localStorage.removeItem("token");
-  //       } else {
-  //         setCurrentUser(res.data.user);
-  //       }
-  //     });
-  //   }
-  // }, []);
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
