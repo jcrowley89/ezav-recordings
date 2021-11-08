@@ -55,7 +55,7 @@ export function s3put(url, object, onUploadProgress) {
   });
 }
 
-export function apiPostFD(url, data) {
+export function apiPostFD(url, data, onUploadProgress) {
   const fdHeaders = headers();
   fdHeaders["Content-Type"] = "multipart/form-data";
   return axios({
@@ -64,6 +64,7 @@ export function apiPostFD(url, data) {
     data: data,
     timeout: 600000,
     headers: headers(),
+    onUploadProgress: onUploadProgress,
   });
 }
 
