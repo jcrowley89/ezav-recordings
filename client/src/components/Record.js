@@ -28,6 +28,7 @@ const Record = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [isUploaded, setIsUploaded] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [isUploadError, setIsUploadError] = useState(false);
 
   const monitorRef = useRef(null);
   const presCanvasRef = useRef(document.createElement("canvas"));
@@ -256,8 +257,8 @@ const Record = () => {
   }
 
   function submitRecording() {
+    if (isUploadError) setIsUploadError(false);
     const key = `recording-${Date.now()}.webm`;
-
     apiGet(`recordings/getSubmitUrl/${key}`)
       .then((res) => {
         const url = res.data.url;
@@ -275,13 +276,29 @@ const Record = () => {
                 setIsUploading(false);
                 setIsUploaded(true);
               })
-              .catch((err) => console.log(err));
+              .catch((err) => setIsUploadError(true));
           })
-          .catch((err) => console.log("inner", err));
+          .catch((err) => setIsUploadError(true));
       })
       .catch((err) => {
-        // handle error
+        setIsUploadError(true)
       });
+  }
+
+  if (isUploadError) {
+    return (
+      <Container>
+      <div className="py-5 px-3 text-center">
+        <h1>
+          <FontAwesomeIcon icon="exclamation-circle" className="text-danger mr-2" />
+          There was an error while uploading your recording.
+        </h1>
+        <h4>
+          <Button onClick={submitRecording} color="primary" pill>Retry Upload</Button>
+        </h4>
+      </div>
+    </Container>
+    );
   }
 
   if (!isUploaded && isUploading)
