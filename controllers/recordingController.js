@@ -70,6 +70,7 @@ exports.getSubmitURL = async (req, res) => {
     {
       Bucket: "ezav-recordings",
       Key: key,
+      Expires: 86400,
       ContentType: "video/webm",
     },
     (err, url) => {

@@ -43,7 +43,7 @@ export function apiPost(url, data) {
   });
 }
 
-export function s3put(url, object) {
+export function s3put(url, object, onUploadProgress) {
   return axios({
     method: "put",
     url: url,
@@ -51,7 +51,8 @@ export function s3put(url, object) {
     headers: {
       "Content-Type": "video/webm",
       "Access-Control-Allow-Origin": "*",
-    }
+    },
+    onUploadProgress: onUploadProgress,
   });
 }
 

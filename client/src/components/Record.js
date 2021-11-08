@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Badge, Button, ButtonGroup, Container } from "reactstrap";
+import { Badge, Button, ButtonGroup, Container, Progress } from "reactstrap";
 import { Loading, Monitor, Slide } from "./";
 import { apiGet, s3put, apiPost, apiPut } from "../utils/api";
 import { MEDIA_URL } from "../utils/constants";
@@ -25,7 +25,9 @@ const Record = () => {
   const [data, setData] = useState();
   const [program, setProgram] = useState();
   const [recordingReady, setRecordingReady] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [isUploaded, setIsUploaded] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   const monitorRef = useRef(null);
   const presCanvasRef = useRef(document.createElement("canvas"));
@@ -255,31 +257,60 @@ const Record = () => {
   }
 
   function submitRecording() {
-    const key = `recording-${Date.now()}.webm`
+    const key = `recording-${Date.now()}.webm`;
 
     apiGet(`recordings/getSubmitUrl/${key}`)
-      .then(
-        (res) => {
-          const url = res.data.url;
-          s3put(url, recordingRef.current)
-            .then((res) => {
-              apiPut(`recordings/${id}`, {
-                recordingFile: key,
-                flags: flagsRef.current,
-                completedAt: new Date(),
-              }).then(() => setIsUploaded(true)).catch(err => console.log(err));
+      .then((res) => {
+        const url = res.data.url;
+        setIsUploading(true);
+        s3put(url, recordingRef.current, (e) => {
+          setProgress(Math.round((100 * e.loaded) / e.total));
+        })
+          .then((res) => {
+            apiPut(`recordings/${id}`, {
+              recordingFile: key,
+              flags: flagsRef.current,
+              completedAt: new Date(),
             })
-            .catch((err) => console.log("inner", err));
-        }
-      )
+              .then(() => {
+                setIsUploading(false);
+                setIsUploaded(true);
+              })
+              .catch((err) => console.log(err));
+          })
+          .catch((err) => console.log("inner", err));
+      })
       .catch((err) => {
         // handle error
       });
   }
 
-  if (isUploaded) {
-    return <h1>Uploaded!</h1>
-  }
+  if (!isUploaded && isUploading)
+    return (
+      <Container>
+        <div className="py-5 px-3 text-center">
+          <h1>Uploading...</h1>
+          <h4>Please wait. This may take a while.</h4>
+          <Progress value={progress} />
+          <h2>{progress} %</h2>
+        </div>
+      </Container>
+    );
+
+  if (isUploaded)
+    return (
+      <Container>
+        <div className="py-5 px-3 text-center">
+          <h1>
+            <FontAwesomeIcon icon="check" className="text-success mr-2" />
+            Uploaded!
+          </h1>
+          <h4>
+            <Link to={`/recording/${id}`}>View Recording</Link>
+          </h4>
+        </div>
+      </Container>
+    );
 
   if (recordingReady) {
     return (

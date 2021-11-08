@@ -24,22 +24,27 @@ const RecordingRow = ({ recording, onClick }) => {
         )}
       </td>
       <td>
-      {currentUser?.id === recording.presenterId ? (
-        <strong>{recording.presentationTitle}</strong>
-      ) : (
-        recording.presentationTitle
-      )}
-        
-        </td>
+        {currentUser?.id === recording.presenterId ? (
+          <strong>{recording.presentationTitle}</strong>
+        ) : (
+          recording.presentationTitle
+        )}
+      </td>
       <td>
         {recording.clientName} - {recording.eventTitle}
       </td>
 
       <td>
         {recording.completedAt ? (
-          <Badge color="success" className="py-2 px-3"><FontAwesomeIcon icon="check" className="mr-2" />Completed</Badge>
+          <Badge color="success" className="py-2 px-3">
+            <FontAwesomeIcon icon="check" className="mr-2" />
+            Completed
+          </Badge>
         ) : (
-          <Badge color="warning" className="py-2 px-3"><FontAwesomeIcon icon="clock" className="mr-2" />Pending</Badge>
+          <Badge color="warning" className="py-2 px-3">
+            <FontAwesomeIcon icon="clock" className="mr-2" />
+            Pending
+          </Badge>
         )}
       </td>
 
@@ -56,11 +61,31 @@ const RecordingRow = ({ recording, onClick }) => {
         </td>
       ) : (
         <td>
-          {currentUser?.role === "presenter" && currentUser?.id === recording.presenterId && !recording.completedAt ? (
-            <Button size="sm" color="danger" tag={Link} to={`/record/${recording.id}`} ><FontAwesomeIcon icon="circle" className="mr-2" />Record</Button>
+          {currentUser?.role === "presenter" &&
+          currentUser?.id === recording.presenterId &&
+          !recording.completedAt ? (
+            <Button
+              size="sm"
+              color="danger"
+              tag={Link}
+              to={`/record/${recording.id}`}
+            >
+              <FontAwesomeIcon icon="circle" className="mr-2" />
+              Record
+            </Button>
           ) : null}
-                    {currentUser?.role === "presenter" && currentUser?.id === recording.presenterId && recording.completedAt ? (
-            <Button size="sm" color="dark" tag={Link} to={`/recording/${recording.id}`} ><FontAwesomeIcon icon="eye" className="mr-2" />View</Button>
+          {currentUser?.role === "presenter" &&
+          currentUser?.id === recording.presenterId &&
+          recording.completedAt ? (
+            <Button
+              size="sm"
+              color="dark"
+              tag={Link}
+              to={`/recording/${recording.id}`}
+            >
+              <FontAwesomeIcon icon="eye" className="mr-2" />
+              View
+            </Button>
           ) : null}
         </td>
       )}
@@ -72,6 +97,7 @@ const Recordings = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [recordings, setRecordings] = useState([]);
   const [trigger, setTrigger] = useState(new Date());
+  const { currentUser } = useContext(AppContext);
 
   useEffect(() => {
     (async () => {
@@ -88,7 +114,11 @@ const Recordings = () => {
 
   return (
     <div id="recordings">
-      <MainContent heading="Recordings" button btnLink="/new-recording">
+      <MainContent
+        heading="Recordings"
+        button={currentUser && currentUser.role === "presenter"}
+        btnLink="/new-recording"
+      >
         {!isLoading && recordings && recordings.length === 0 ? (
           <UncontrolledAlert color="primary">
             No recordings found.

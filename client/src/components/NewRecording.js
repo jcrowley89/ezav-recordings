@@ -53,7 +53,7 @@ const NewRecording = () => {
             />
           </FormGroup>
           {disabled ? (
-            <div><Spinner /> Uploading... (This may take a few minutes)</div>
+            <div><Spinner /> Uploading and Processing... (This may take a few minutes)</div>
           ) : (
             <Button color="primary" className="mt-3 rounded-pill">
               Submit
