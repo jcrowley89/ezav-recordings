@@ -17,14 +17,14 @@ const RecordingRow = ({ recording, onClick }) => {
   return (
     <tr>
       <td>
-        {currentUser?.id === recording.presenterId ? (
+        {currentUser?.role === "presenter" && currentUser?.id === recording.presenterId ? (
           <strong>{`${recording.presenterLastName}, ${recording.presenterFirstName}`}</strong>
         ) : (
           `${recording.presenterLastName}, ${recording.presenterFirstName}`
         )}
       </td>
       <td>
-        {currentUser?.id === recording.presenterId ? (
+        {currentUser?.role === "presenter" && currentUser?.id === recording.presenterId ? (
           <strong>{recording.presentationTitle}</strong>
         ) : (
           recording.presentationTitle
@@ -36,12 +36,12 @@ const RecordingRow = ({ recording, onClick }) => {
 
       <td>
         {recording.completedAt ? (
-          <Badge color="success" className="py-2 px-3">
+          <Badge color="success" className="py-2 px-3" pill>
             <FontAwesomeIcon icon="check" className="mr-2" />
             Completed
           </Badge>
         ) : (
-          <Badge color="warning" className="py-2 px-3">
+          <Badge color="warning" className="py-2 px-3" pill>
             <FontAwesomeIcon icon="clock" className="mr-2" />
             Pending
           </Badge>
