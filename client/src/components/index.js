@@ -28,6 +28,5 @@ export { default as Admin } from "./Admin";
 export { default as Instructions } from "./Instructions";
 export { default as FAQs } from "./FAQs";
 export { default as Contact } from "./Contact";
-export { default as Monitor } from "./Monitor";
 export { default as Slide } from "./Slide";
 export { default as Loading } from "./Loading";

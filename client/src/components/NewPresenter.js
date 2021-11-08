@@ -1,4 +1,3 @@
-import { SecretsManager } from "aws-sdk";
 import React, { useState, useEffect } from "react";
 import { Redirect } from "react-router";
 import { UncontrolledAlert } from "reactstrap";

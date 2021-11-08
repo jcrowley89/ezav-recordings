@@ -3,7 +3,7 @@ import { Button } from "reactstrap";
 import AppContext from "../AppContext";
 
 const SidebarTop = () => {
-  const { setIsLoggedIn, currentUser, setCurrentUser } = useContext(AppContext);
+  const { currentUser, setCurrentUser } = useContext(AppContext);
 
   function handleLogout() {
     localStorage.removeItem("token");

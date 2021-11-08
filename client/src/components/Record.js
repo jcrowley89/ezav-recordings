@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { Link, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Badge, Button, ButtonGroup, Container, Progress } from "reactstrap";
-import { Loading, Monitor, Slide } from "./";
-import { apiGet, s3put, apiPost, apiPut } from "../utils/api";
+import { Loading, Slide } from "./";
+import { apiGet, s3put, apiPut } from "../utils/api";
 import { MEDIA_URL } from "../utils/constants";
 import { toHHMMSS } from "../utils/helpers";
 import AppContext from "../AppContext";
@@ -41,7 +41,6 @@ const Record = () => {
   const flagsRef = useRef([]);
 
   let interval;
-  let recording;
 
   const scale = 94;
   const mediaOpts = {
