@@ -18,6 +18,7 @@ exports.index = async (req, res) => {
       model: Presenter,
       include: [{ model: Program, attributes: ["eventTitle", "clientName"] }],
     },
+    order: [["Presenter", "lastName", "ASC"], ["Presenter", "firstName", "ASC"]],
   });
 
   if (role === "presenter") {
