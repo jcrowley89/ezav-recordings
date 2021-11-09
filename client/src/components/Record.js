@@ -313,6 +313,7 @@ const Record = () => {
     return (
       <Container>
         <div className="py-5 px-3 text-center">
+          <Loading />
           <h1>Uploading...</h1>
           <h4>Please wait. This may take a while.</h4>
           <Progress value={progress} />
