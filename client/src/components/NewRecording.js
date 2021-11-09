@@ -32,6 +32,7 @@ const NewRecording = () => {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setCanSubmit(false);
     setDisabled(true);
     setIsUploading(true);
     const dateString = Date.now().toString();
