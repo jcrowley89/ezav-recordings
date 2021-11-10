@@ -50,7 +50,7 @@ const RecordingRow = ({ recording, onClick }) => {
           </Badge>
         )}
       </td>
-
+      <td>
       {recording?.completedAt ? (
         <a
           href={recording && `${MEDIA_URL}${recording.recordingFile}`}
@@ -59,7 +59,7 @@ const RecordingRow = ({ recording, onClick }) => {
           Download
         </a>
       ) : null}
-
+      </td>
       {currentUser?.role === "admin" || currentUser?.role === "developer" ? (
         <td>
           <ButtonGroup size="sm">
