@@ -65,8 +65,8 @@ const Record = () => {
 
   useEffect(() => {
     if (program) {
-      frameRef.current.src = `${MEDIA_URL}${program.frame}.png`;
       frameRef.current.onload = () => setFrameLoaded(true);
+      frameRef.current.src = `${MEDIA_URL}${program.frame}.png`;
     }
   }, [program]);
 
