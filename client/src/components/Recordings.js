@@ -11,20 +11,23 @@ import { Link } from "react-router-dom";
 import { Loading, MainContent } from "./";
 import { apiGet, apiDelete } from "../utils/api";
 import AppContext from "../AppContext";
+import { MEDIA_URL } from "../utils/constants";
 
 const RecordingRow = ({ recording, onClick }) => {
   const { currentUser } = useContext(AppContext);
   return (
     <tr>
       <td>
-        {currentUser?.role === "presenter" && currentUser?.id === recording.presenterId ? (
+        {currentUser?.role === "presenter" &&
+        currentUser?.id === recording.presenterId ? (
           <strong>{`${recording.presenterLastName}, ${recording.presenterFirstName}`}</strong>
         ) : (
           `${recording.presenterLastName}, ${recording.presenterFirstName}`
         )}
       </td>
       <td>
-        {currentUser?.role === "presenter" && currentUser?.id === recording.presenterId ? (
+        {currentUser?.role === "presenter" &&
+        currentUser?.id === recording.presenterId ? (
           <strong>{recording.presentationTitle}</strong>
         ) : (
           recording.presentationTitle
@@ -47,6 +50,15 @@ const RecordingRow = ({ recording, onClick }) => {
           </Badge>
         )}
       </td>
+
+      {recording?.completedAt ? (
+        <a
+          href={recording && `${MEDIA_URL}${recording.recordingFile}`}
+          target="_blank"
+        >
+          Download
+        </a>
+      ) : null}
 
       {currentUser?.role === "admin" || currentUser?.role === "developer" ? (
         <td>
@@ -134,6 +146,7 @@ const Recordings = () => {
                 <th>Presentation Title</th>
                 <th>Program</th>
                 <th>Status</th>
+                <th></th>
                 <th></th>
               </tr>
             </thead>

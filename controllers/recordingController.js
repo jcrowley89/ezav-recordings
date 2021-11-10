@@ -10,6 +10,7 @@ exports.index = async (req, res) => {
     attributes: [
       "id",
       "presentationTitle",
+      "presentationFile",
       "createdAt",
       "updatedAt",
       "completedAt",
