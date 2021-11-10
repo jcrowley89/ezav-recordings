@@ -56,12 +56,12 @@ const Record = () => {
   }, []);
 
   useEffect(() => {
-    if (currentUser) {
-      apiGet(`programs/${currentUser.programId}`).then((res) => {
+    if (data) {
+      apiGet(`programs/${data.programId}`).then((res) => {
         setProgram(res.data);
       });
     }
-  }, [currentUser]);
+  }, [data]);
 
   useEffect(() => {
     if (program) {
@@ -99,6 +99,16 @@ const Record = () => {
 
   useEffect(() => {
     if (isPlaying) {
+      document.addEventListener("keydown", (e)=>{
+        switch (e.key) {
+          case "ArrowLeft":
+            nextSlide()
+            break;
+          case "ArrowRight":
+            prevSlide();
+            break;
+        }
+      });
       const videoHeight = videoRef.current.srcObject
         .getVideoTracks()[0]
         .getSettings().height;

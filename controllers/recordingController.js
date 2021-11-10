@@ -111,7 +111,7 @@ exports.read = async (req, res) => {
     recordingFile: recording.recordingFile,
     flags: flagsArr,
     numSlides: recording.numSlides,
-    programId: recording.Presenter.Program.id,
+    programId: recording.Presenter.ProgramId,
     eventTitle: recording.Presenter.Program.eventTitle,
     clientName: recording.Presenter.Program.clientName,
     completedAt: recording.completedAt,
