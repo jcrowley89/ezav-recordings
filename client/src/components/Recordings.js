@@ -51,7 +51,7 @@ const RecordingRow = ({ recording, onClick }) => {
         )}
       </td>
       <td>
-      {recording?.completedAt ? (
+      {currentUser?.role === "admin" || currentUser?.role === "developer" && recording?.completedAt ? (
         <a
           href={recording && `${MEDIA_URL}${recording.recordingFile}`}
           target="_blank"
