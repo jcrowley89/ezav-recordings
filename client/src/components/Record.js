@@ -411,7 +411,7 @@ const Record = () => {
             </div>
           </>
         ) : null}
-        {!isReady && numSlidesLoaded === data?.numSlides && !frameLoaded ? (
+        {numSlidesLoaded === data?.numSlides && !frameLoaded ? (
           <>
           <Loading />
           <div className="text-center">
