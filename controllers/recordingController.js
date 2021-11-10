@@ -10,7 +10,7 @@ exports.index = async (req, res) => {
     attributes: [
       "id",
       "presentationTitle",
-      "presentationFile",
+      "recordingFile",
       "createdAt",
       "updatedAt",
       "completedAt",
@@ -35,6 +35,7 @@ exports.index = async (req, res) => {
       presenterFirstName: r.Presenter.firstName,
       presenterLastName: r.Presenter.lastName,
       presentationTitle: r.presentationTitle,
+      recordingFile: r.recordingFile,
       presenterId: r.Presenter.id,
       programId: r.Presenter.ProgramId,
       eventTitle: r.Presenter.Program.eventTitle,
