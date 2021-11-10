@@ -101,10 +101,10 @@ const Record = () => {
     if (isPlaying) {
       document.addEventListener("keydown", (e)=>{
         switch (e.key) {
-          case "ArrowLeft":
+          case "ArrowRight":
             nextSlide()
             break;
-          case "ArrowRight":
+          case "ArrowLeft":
             prevSlide();
             break;
         }
