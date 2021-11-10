@@ -55,6 +55,7 @@ const RecordingRow = ({ recording, onClick }) => {
         <a
           href={recording && `${MEDIA_URL}${recording.recordingFile}`}
           target="_blank"
+          download={recording.recordingFile}
         >
           Download
         </a>
