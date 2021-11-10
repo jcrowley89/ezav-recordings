@@ -7,9 +7,10 @@ const upload = require("./middleware/upload");
 const convertPresentation = require("./middleware/convertPresentation");
 
 router.post("/login", controllers.auth.login);
-router.get("/getCurrentUser", controllers.auth.getCurrentUser);
 
 router.use(authenticate);
+
+router.get("/getCurrentUser", controllers.auth.getCurrentUser);
 
 router.get("/programs", authorize("anyAdmin"), controllers.program.index);
 router.post("/programs", authorize("anyAdmin"), upload.program, controllers.program.create);
